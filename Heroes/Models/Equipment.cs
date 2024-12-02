@@ -10,6 +10,7 @@ public class Equipment
     [Required]
     public string Description { get; set; }
     public double Weight { get; set; }
-    public int TypeId {get; set;}
+    public EquipmentType EquipmentType {get; set;}
+    public int EquipmentTypeId {get; set;}
     public int? HeroId {get; set;}
 }
