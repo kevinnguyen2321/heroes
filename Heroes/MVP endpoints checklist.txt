@@ -1,11 +1,11 @@
 Get all heroes (name, class)  ✔
 Get a single hero's details (name, class, level, description, their current quest's name, equipment)✔
 Get all equipment (name, description, type)✔
-Get all quests (name, isCompleted)
-Get a quest's details (name, description, isCompleted, heroes)
-Create a quest (name, description)
-Assign a hero to a quest
-Complete a quest
-Create a new Equipment item (name, description, type, weight)
-Assign Equipment  to a hero
+Get all quests (name, isCompleted)✔
+Get a quest's details (name, description, isCompleted, heroes)✔
+Create a quest (name, description) ✔
+Assign a hero to a quest ✔
+Complete a quest ✔
+Create a new Equipment item (name, description, type, weight) ✔
+Assign Equipment to a hero
 Delete Equipment
