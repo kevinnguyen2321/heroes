@@ -1,17 +1,13 @@
-using System.ComponentModel.DataAnnotations;
+namespace Heroes.Models.DTOs;
 
-namespace Heroes.Models;
-
-public class Hero
+public class HeroDTO
 {
     public int Id { get; set; }
-    [Required]
     public string Name { get; set; }
-    [Required]
     public string Description { get; set; }
     public int ClassId { get; set; }
     public int Level { get; set; }
-    public int? QuestId { get; set; }
+    public int QuestId { get; set; }
     public List<Equipment> Equipments { get; set; }
     
 }
