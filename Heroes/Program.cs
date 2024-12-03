@@ -16,7 +16,10 @@ builder.Services.AddSwaggerGen();
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 // allows our api endpoints to access the database through Entity Framework Core
-builder.Services.AddNpgsql<HeroesDbContext>(builder.Configuration["HeroesDbConnectionString"]);
+// builder.Services.AddNpgsql<HeroesDbContext>(builder.Configuration["HeroesDbConnectionString"]);
+
+builder.Services.AddDbContext<HeroesDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
 var app = builder.Build();
@@ -90,8 +93,11 @@ app.MapGet("/equipments", (HeroesDbContext db) =>
             Description = e.Description,
             EquipmentType = new EquipmentTypeDTO
             {
-                Name = e.EquipmentType.Name
-            }
+                Name = e.EquipmentType.Name,
+                
+            },
+            Available = e.Available
+            
         }).ToList();
 });
 
@@ -100,6 +106,7 @@ app.MapGet("/quests", (HeroesDbContext db) =>
     return db.Quests
     .Select(q => new QuestDTO
     {
+        Id = q.Id,
         Name = q.Name,
         Complete = q.Complete
     }).ToList();
@@ -107,9 +114,10 @@ app.MapGet("/quests", (HeroesDbContext db) =>
 
 app.MapGet("/quests/{id}", (HeroesDbContext db, int id) => 
 {
-    Quest foundQuest = db.Quests
-    .Include(q => q.Heroes)
-    .FirstOrDefault(q => q.Id == id);
+     Quest foundQuest = db.Quests
+        .Include(q => q.Heroes)
+        .Include(q => q.Bounty) // Include the related Equipments
+        .FirstOrDefault(q => q.Id == id);
 
     if (foundQuest == null)
     {
@@ -126,7 +134,14 @@ app.MapGet("/quests/{id}", (HeroesDbContext db, int id) =>
         {
             Id = h.Id,
             Name = h.Name,
-        }).ToList() ?? new List<HeroDTO>()
+        }).ToList() ?? new List<HeroDTO>(),
+        Bounty = foundQuest.Bounty?.Select(b => new EquipmentDTO
+        {
+            Name = b.Name,
+            QuestId = b.QuestId,
+            Available = b.Available
+        }).ToList() ?? new List<EquipmentDTO>()
+
     });
 });
 
@@ -161,6 +176,8 @@ app.MapPut("/quests/complete/{questId}", (HeroesDbContext db, int questId) => {
     }
 
     foundQuest.Complete = true;
+    foundQuest.Bounty = db.Equipments.Where(e => e.QuestId == questId).ToList();
+    foundQuest.makeBountyItemsAvailable();
     db.SaveChanges();
     return Results.NoContent();
 

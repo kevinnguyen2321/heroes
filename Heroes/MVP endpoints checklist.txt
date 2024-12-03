@@ -9,3 +9,18 @@ Complete a quest ✔
 Create a new Equipment item (name, description, type, weight) ✔
 Assign Equipment to a hero ✔
 Delete Equipment✔
+
+
+
+-List of equipment (bounty) for each quest
+
+-Equipment needs available property
+
+- If quest is complete, then equipment 
+property available is set to true
+-Endpoint for assigning equipment
+needs a conditional
+
+- 
+
+

@@ -10,5 +10,6 @@ public class EquipmentDTO
     public EquipmentTypeDTO EquipmentType {get; set;} 
     public int HeroId {get; set;}
     public int QuestId {get; set;}
-    public bool available {get; set;}
+    public QuestDTO Quest { get; set; }
+    public bool Available {get; set;}
 }

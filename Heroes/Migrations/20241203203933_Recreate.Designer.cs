@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Heroes.Migrations
 {
     [DbContext(typeof(HeroesDbContext))]
-    [Migration("20241203161150_ManyToManyHeroesQuests")]
-    partial class ManyToManyHeroesQuests
+    [Migration("20241203203933_Recreate")]
+    partial class Recreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -47,6 +47,9 @@ namespace Heroes.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("Available")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
@@ -61,6 +64,9 @@ namespace Heroes.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("QuestId")
+                        .HasColumnType("integer");
+
                     b.Property<double>("Weight")
                         .HasColumnType("double precision");
 
@@ -70,87 +76,109 @@ namespace Heroes.Migrations
 
                     b.HasIndex("HeroId");
 
+                    b.HasIndex("QuestId");
+
                     b.ToTable("Equipments");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
+                            Available = false,
                             Description = "A legendary sword said to be unbreakable and capable of cutting through any material.",
                             EquipmentTypeId = 1,
                             Name = "Excalibur",
+                            QuestId = 2,
                             Weight = 4.5
                         },
                         new
                         {
                             Id = 2,
+                            Available = false,
                             Description = "Armor forged from the scales of an ancient dragon, providing unmatched durability.",
                             EquipmentTypeId = 2,
                             Name = "Dragon Scale Armor",
+                            QuestId = 2,
                             Weight = 15.0
                         },
                         new
                         {
                             Id = 3,
+                            Available = false,
                             Description = "A shield imbued with divine power to repel even the fiercest attacks.",
                             EquipmentTypeId = 3,
                             Name = "Aegis",
+                            QuestId = 3,
                             Weight = 6.0
                         },
                         new
                         {
                             Id = 4,
+                            Available = false,
                             Description = "A helmet that grants the wearer heightened perception and clarity of thought.",
                             EquipmentTypeId = 4,
                             Name = "Helm of Insight",
+                            QuestId = 3,
                             Weight = 3.0
                         },
                         new
                         {
                             Id = 5,
+                            Available = false,
                             Description = "Lightweight boots that allow the wearer to move with incredible speed.",
                             EquipmentTypeId = 5,
                             Name = "Boots of Swiftness",
+                            QuestId = 3,
                             Weight = 2.0
                         },
                         new
                         {
                             Id = 6,
+                            Available = false,
                             Description = "Gauntlets that grant the wearer immense physical power.",
                             EquipmentTypeId = 6,
                             Name = "Gauntlets of Strength",
+                            QuestId = 4,
                             Weight = 5.0
                         },
                         new
                         {
                             Id = 7,
+                            Available = false,
                             Description = "A mystical ring that slows the effects of aging and enhances magical abilities.",
                             EquipmentTypeId = 7,
                             Name = "Ring of Eternity",
+                            QuestId = 4,
                             Weight = 0.10000000000000001
                         },
                         new
                         {
                             Id = 8,
+                            Available = false,
                             Description = "An enchanted amulet that creates a magical barrier around the wearer.",
                             EquipmentTypeId = 8,
                             Name = "Amulet of Protection",
+                            QuestId = 5,
                             Weight = 0.5
                         },
                         new
                         {
                             Id = 9,
+                            Available = false,
                             Description = "A potion that restores health and vitality when consumed.",
                             EquipmentTypeId = 9,
                             Name = "Healing Potion",
+                            QuestId = 5,
                             Weight = 0.29999999999999999
                         },
                         new
                         {
                             Id = 10,
+                            Available = false,
                             Description = "A magical scroll containing the spell to cast a devastating fireball.",
                             EquipmentTypeId = 10,
                             Name = "Scroll of Fireball",
+                            QuestId = 5,
                             Weight = 0.20000000000000001
                         });
                 });
@@ -427,7 +455,15 @@ namespace Heroes.Migrations
                         .WithMany("Equipments")
                         .HasForeignKey("HeroId");
 
+                    b.HasOne("Heroes.Models.Quest", "Quest")
+                        .WithMany("Bounty")
+                        .HasForeignKey("QuestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("EquipmentType");
+
+                    b.Navigation("Quest");
                 });
 
             modelBuilder.Entity("Heroes.Models.Hero", b =>
@@ -444,6 +480,11 @@ namespace Heroes.Migrations
             modelBuilder.Entity("Heroes.Models.Hero", b =>
                 {
                     b.Navigation("Equipments");
+                });
+
+            modelBuilder.Entity("Heroes.Models.Quest", b =>
+                {
+                    b.Navigation("Bounty");
                 });
 #pragma warning restore 612, 618
         }
