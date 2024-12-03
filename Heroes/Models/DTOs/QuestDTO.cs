@@ -7,4 +7,5 @@ public class QuestDTO
     public string Description {get; set;}
     public bool Complete {get; set;}
     public List<HeroDTO> Heroes {get; set;}
+      public List<EquipmentDTO> Bounty {get; set;}
 }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Heroes.Migrations
 {
     [DbContext(typeof(HeroesDbContext))]
-    partial class HeroesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241203154912_ConfigureSetNullForQuest")]
+    partial class ConfigureSetNullForQuest
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -20,21 +23,6 @@ namespace Heroes.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("HeroQuest", b =>
-                {
-                    b.Property<int>("HeroId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("QuestId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("HeroId", "QuestId");
-
-                    b.HasIndex("QuestId");
-
-                    b.ToTable("HeroQuest");
-                });
 
             modelBuilder.Entity("Heroes.Models.Equipment", b =>
                 {
@@ -243,9 +231,14 @@ namespace Heroes.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int?>("QuestId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("HeroClassId");
+
+                    b.HasIndex("QuestId");
 
                     b.ToTable("Heroes");
 
@@ -256,7 +249,8 @@ namespace Heroes.Migrations
                             Description = "A brave knight seeking redemption.",
                             HeroClassId = 1,
                             Level = 10,
-                            Name = "Arthas"
+                            Name = "Arthas",
+                            QuestId = 1
                         },
                         new
                         {
@@ -264,7 +258,8 @@ namespace Heroes.Migrations
                             Description = "A powerful mage wielding frost magic.",
                             HeroClassId = 2,
                             Level = 12,
-                            Name = "Jaina"
+                            Name = "Jaina",
+                            QuestId = 1
                         },
                         new
                         {
@@ -272,7 +267,8 @@ namespace Heroes.Migrations
                             Description = "A shaman connected to the elements.",
                             HeroClassId = 3,
                             Level = 15,
-                            Name = "Thrall"
+                            Name = "Thrall",
+                            QuestId = 4
                         },
                         new
                         {
@@ -397,21 +393,6 @@ namespace Heroes.Migrations
                         });
                 });
 
-            modelBuilder.Entity("HeroQuest", b =>
-                {
-                    b.HasOne("Heroes.Models.Hero", null)
-                        .WithMany()
-                        .HasForeignKey("HeroId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Heroes.Models.Quest", null)
-                        .WithMany()
-                        .HasForeignKey("QuestId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Heroes.Models.Equipment", b =>
                 {
                     b.HasOne("Heroes.Models.EquipmentType", "EquipmentType")
@@ -435,12 +416,24 @@ namespace Heroes.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Heroes.Models.Quest", "Quest")
+                        .WithMany("Heroes")
+                        .HasForeignKey("QuestId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("HeroClass");
+
+                    b.Navigation("Quest");
                 });
 
             modelBuilder.Entity("Heroes.Models.Hero", b =>
                 {
                     b.Navigation("Equipments");
+                });
+
+            modelBuilder.Entity("Heroes.Models.Quest", b =>
+                {
+                    b.Navigation("Heroes");
                 });
 #pragma warning restore 612, 618
         }

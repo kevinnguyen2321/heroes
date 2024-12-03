@@ -17,12 +17,21 @@ public class HeroesDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
 {
+    modelBuilder.Entity<Hero>()
+        .HasMany(h => h.Quests)
+        .WithMany(q => q.Heroes)
+        .UsingEntity<Dictionary<string, object>>(
+            "HeroQuest",
+            h => h.HasOne<Quest>().WithMany().HasForeignKey("QuestId"),
+            q => q.HasOne<Hero>().WithMany().HasForeignKey("HeroId")
+        );
+
   
     modelBuilder.Entity<Hero>().HasData(new Hero[]
     {
-        new Hero { Id = 1, Name = "Arthas", Description = "A brave knight seeking redemption.", HeroClassId = 1, Level = 10, QuestId = 1},
-        new Hero { Id = 2, Name = "Jaina", Description = "A powerful mage wielding frost magic.", HeroClassId = 2, Level = 12, QuestId = 1},
-        new Hero { Id = 3, Name = "Thrall", Description = "A shaman connected to the elements.", HeroClassId = 3, Level = 15, QuestId = 4},
+        new Hero { Id = 1, Name = "Arthas", Description = "A brave knight seeking redemption.", HeroClassId = 1, Level = 10 },
+        new Hero { Id = 2, Name = "Jaina", Description = "A powerful mage wielding frost magic.", HeroClassId = 2, Level = 12 },
+        new Hero { Id = 3, Name = "Thrall", Description = "A shaman connected to the elements.", HeroClassId = 3, Level = 15 },
         new Hero { Id = 4, Name = "Sylvanas", Description = "A skilled ranger turned dark.", HeroClassId = 4, Level = 20, },
         new Hero { Id = 5, Name = "Illidan", Description = "A demon hunter seeking vengeance.", HeroClassId = 5, Level = 25, }
     });
@@ -30,16 +39,16 @@ public class HeroesDbContext : DbContext
     
     modelBuilder.Entity<Equipment>().HasData(new Equipment[]
     {
-        new Equipment { Id = 1, Name = "Excalibur", Description = "A legendary sword said to be unbreakable and capable of cutting through any material.", Weight = 4.5, EquipmentTypeId = 1 },
-        new Equipment { Id = 2, Name = "Dragon Scale Armor", Description = "Armor forged from the scales of an ancient dragon, providing unmatched durability.", Weight = 15.0, EquipmentTypeId = 2,  },
-        new Equipment { Id = 3, Name = "Aegis", Description = "A shield imbued with divine power to repel even the fiercest attacks.", Weight = 6.0, EquipmentTypeId = 3,  },
-        new Equipment { Id = 4, Name = "Helm of Insight", Description = "A helmet that grants the wearer heightened perception and clarity of thought.", Weight = 3.0, EquipmentTypeId = 4, },
-        new Equipment { Id = 5, Name = "Boots of Swiftness", Description = "Lightweight boots that allow the wearer to move with incredible speed.", Weight = 2.0, EquipmentTypeId = 5, },
-        new Equipment { Id = 6, Name = "Gauntlets of Strength", Description = "Gauntlets that grant the wearer immense physical power.", Weight = 5.0, EquipmentTypeId = 6, },
-        new Equipment { Id = 7, Name = "Ring of Eternity", Description = "A mystical ring that slows the effects of aging and enhances magical abilities.", Weight = 0.1, EquipmentTypeId = 7, },
-        new Equipment { Id = 8, Name = "Amulet of Protection", Description = "An enchanted amulet that creates a magical barrier around the wearer.", Weight = 0.5, EquipmentTypeId = 8, },
-        new Equipment { Id = 9, Name = "Healing Potion", Description = "A potion that restores health and vitality when consumed.", Weight = 0.3, EquipmentTypeId = 9, },
-        new Equipment { Id = 10, Name = "Scroll of Fireball", Description = "A magical scroll containing the spell to cast a devastating fireball.", Weight = 0.2, EquipmentTypeId = 10, }
+        new Equipment { Id = 1, Name = "Excalibur", Description = "A legendary sword said to be unbreakable and capable of cutting through any material.", Weight = 4.5, EquipmentTypeId = 1, QuestId = 2 },
+        new Equipment { Id = 2, Name = "Dragon Scale Armor", Description = "Armor forged from the scales of an ancient dragon, providing unmatched durability.", Weight = 15.0, EquipmentTypeId = 2, QuestId = 2 },
+        new Equipment { Id = 3, Name = "Aegis", Description = "A shield imbued with divine power to repel even the fiercest attacks.", Weight = 6.0, EquipmentTypeId = 3, QuestId = 2 },
+        new Equipment { Id = 4, Name = "Helm of Insight", Description = "A helmet that grants the wearer heightened perception and clarity of thought.", Weight = 3.0, EquipmentTypeId = 4, QuestId = 3 },
+        new Equipment { Id = 5, Name = "Boots of Swiftness", Description = "Lightweight boots that allow the wearer to move with incredible speed.", Weight = 2.0, EquipmentTypeId = 5, QuestId = 3 },
+        new Equipment { Id = 6, Name = "Gauntlets of Strength", Description = "Gauntlets that grant the wearer immense physical power.", Weight = 5.0, EquipmentTypeId = 6, QuestId = 4 },
+        new Equipment { Id = 7, Name = "Ring of Eternity", Description = "A mystical ring that slows the effects of aging and enhances magical abilities.", Weight = 0.1, EquipmentTypeId = 7, QuestId = 5 },
+        new Equipment { Id = 8, Name = "Amulet of Protection", Description = "An enchanted amulet that creates a magical barrier around the wearer.", Weight = 0.5, EquipmentTypeId = 8, QuestId = 4 },
+        new Equipment { Id = 9, Name = "Healing Potion", Description = "A potion that restores health and vitality when consumed.", Weight = 0.3, EquipmentTypeId = 9, QuestId = 5 },
+        new Equipment { Id = 10, Name = "Scroll of Fireball", Description = "A magical scroll containing the spell to cast a devastating fireball.", Weight = 0.2, EquipmentTypeId = 10, QuestId = 6 }
     });
 
       modelBuilder.Entity<EquipmentType>().HasData(new EquipmentType[]

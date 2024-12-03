@@ -46,7 +46,7 @@ app.MapGet("/heroes/{id}", (HeroesDbContext db, int id) =>
 {
     Hero? foundHero = db.Heroes
         .Include(h => h.HeroClass)
-        .Include(h => h.Quest)
+        .Include(h => h.Quests)
         .Include(h => h.Equipments)
         .FirstOrDefault(h => h.Id == id);
 
@@ -65,14 +65,18 @@ app.MapGet("/heroes/{id}", (HeroesDbContext db, int id) =>
             Name = foundHero.HeroClass.Name
         } : null,
         Level = foundHero.Level,
-        Quest = foundHero.Quest != null ? new QuestDTO
+        Quests = foundHero.Quests != null ? foundHero.Quests.Select(q => new QuestDTO
         {
-            Id = foundHero.Quest.Id,
-            Name = foundHero.Quest.Name,
-            Description = foundHero.Quest.Description,
-            Complete = foundHero.Quest.Complete,
-        } : null,
-        Equipments = foundHero.Equipments
+            Id = q.Id,
+            Name = q.Name,
+            Description = q.Description,
+            Complete = q.Complete,
+            Heroes = q.Heroes != null ? q.Heroes.Select(h => new HeroDTO
+            {
+                Name = h.Name
+            }).ToList() : null
+        }).ToList() : null
+       
     });
 });
 
@@ -134,15 +138,15 @@ app.MapPost("/quests", (HeroesDbContext db, Quest quest) =>
     return Results.Created($"/quests/{quest.Id}", quest);
 });
 
-app.MapPut("/heroes/assign/{id}/{questId}", (HeroesDbContext db, int id, int questId) => {
+app.MapPut("/heroes/assign/{id}/{questId}", (HeroesDbContext db, int id, Quest quest) => {
     Hero foundHero = db.Heroes.FirstOrDefault(h => h.Id == id);
 
     if (foundHero == null)
     {
         return Results.NotFound();
     }
-
-    foundHero.QuestId = questId;
+    foundHero.Quests = new List<Quest>();
+    foundHero.Quests.Add(quest);
     db.SaveChanges();
     return Results.NoContent();
 
@@ -170,7 +174,53 @@ app.MapPost("/equipments/", (HeroesDbContext db, Equipment equipment) =>
     return Results.Created($"/equipments/{equipment.Id}",equipment);
 });
 
+app.MapPut("/heroes/assign-equipment/{id}", (HeroesDbContext db, int id, Equipment equipment) => {
+    Hero foundHero = db.Heroes.FirstOrDefault(h => h.Id == id);
+    if (foundHero == null)
+    {
+        return Results.NotFound();
+    }
 
+   foundHero.Equipments =  new List<Equipment>();
+   foundHero.Equipments.Add(equipment);
+    db.SaveChanges();
+    return Results.NoContent();
+
+});
+
+app.MapDelete("/equipments/{id}", (HeroesDbContext db, int id) => {
+    Equipment foundEquipment = db.Equipments.FirstOrDefault(e => e.Id == id);
+  if(foundEquipment == null)
+  {
+      return Results.NotFound();
+  }
+  db.Equipments.Remove(foundEquipment);
+  db.SaveChanges();
+  return Results.NoContent();
+});
+
+
+app.MapDelete("/heroes/{id}", (HeroesDbContext db, int id) => {
+    Hero foundHero = db.Heroes.FirstOrDefault(h => h.Id == id);
+  if(foundHero == null)
+  {
+      return Results.NotFound();
+  }
+  db.Heroes.Remove(foundHero);
+  db.SaveChanges();
+  return Results.NoContent();
+});
+
+app.MapDelete("/quests/{id}", (HeroesDbContext db, int id) => {
+    Quest foundQuest = db.Quests.FirstOrDefault(q => q.Id == id);
+  if(foundQuest == null)
+  {
+      return Results.NotFound();
+  }
+  db.Quests.Remove(foundQuest);
+  db.SaveChanges();
+  return Results.NoContent();
+});
 
 
 

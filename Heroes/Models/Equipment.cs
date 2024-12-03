@@ -13,4 +13,6 @@ public class Equipment
     public EquipmentType EquipmentType {get; set;}
     public int EquipmentTypeId {get; set;}
     public int? HeroId {get; set;}
+    public int QuestId {get; set;}
+    public bool Available {get; set;}
 }

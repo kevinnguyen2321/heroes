@@ -7,5 +7,5 @@ Create a quest (name, description) ✔
 Assign a hero to a quest ✔
 Complete a quest ✔
 Create a new Equipment item (name, description, type, weight) ✔
-Assign Equipment to a hero
-Delete Equipment
+Assign Equipment to a hero ✔
+Delete Equipment✔

@@ -9,4 +9,6 @@ public class EquipmentDTO
     public int EquipmentTypeId {get; set;}
     public EquipmentTypeDTO EquipmentType {get; set;} 
     public int HeroId {get; set;}
+    public int QuestId {get; set;}
+    public bool available {get; set;}
 }
